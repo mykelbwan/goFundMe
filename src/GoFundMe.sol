@@ -31,11 +31,12 @@ contract GoFundMe is ContractTransparencyConfig {
         uint256 endTime;
         uint256 raisedAmount;
         string description;
+        address creator;
         bool withdrawn;
         bool ended;
     }
 
-    mapping(uint256 campaignId => Campaign) campaigns;
+    mapping(uint256 campaignId => Campaign) private campaigns;
     uint256 private nextCampaignId;
     uint16 private maxdescriptionLength = 500;
 
@@ -57,8 +58,8 @@ contract GoFundMe is ContractTransparencyConfig {
         uint256 _durationInDays,
         string calldata _description
     ) external {
-        if (_durationInDays < 0) revert DurationShouldBeGreaterThanZero();
-        if (_fundingTarget < 0) revert FundingTargetShouldBeGreaterThanZero();
+        if (_durationInDays == 0) revert DurationShouldBeGreaterThanZero();
+        if (_fundingTarget == 0) revert FundingTargetShouldBeGreaterThanZero();
         if (bytes(_description).length > maxdescriptionLength)
             revert DescriptionTooLong();
 
@@ -161,6 +162,7 @@ contract GoFundMe is ContractTransparencyConfig {
                 endTime: campaign.endTime,
                 raisedAmount: campaign.raisedAmount,
                 description: campaign.description,
+                creator: campaign.creator,
                 withdrawn: campaign.withdrawn,
                 ended: hasEnded
             });
